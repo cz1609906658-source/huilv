@@ -52,7 +52,8 @@
 
 1.  **克隆仓库：**
     ```bash
-     https://github.com/chengege666/huilv
+     git clone https://github.com/chengege666/huilv.git
+cd huilv
     ```
 
 2.  **打开文件：**
