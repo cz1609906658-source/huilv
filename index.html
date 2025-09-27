@@ -336,7 +336,7 @@
             padding: 15px;
             margin-top: 15px;
             text-align: center;
-            transition: var(--transition);
+            transition: var(--transition;
         }
         
         .result-item {
@@ -958,10 +958,13 @@
             const dailyCost = monthlyCost / daysPerMonth;
             const days = Math.floor(remainingAmount / dailyCost);
             
-            // 修复日期计算：使用时间戳相加的方式避免月份边界问题
+            // 计算总天数
+            const totalDays = months * 30 + days;
+            
+            // 计算结束日期
             const startDate = new Date(startDateStr);
-            const totalDays = months * 30 + days; // 总天数
-            const endDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + totalDays);
             
             // 计算剩余金额（精确到分）
             const finalRemaining = remainingAmount - (days * dailyCost);
@@ -970,13 +973,13 @@
             budgetResult.innerHTML = `
                 <div id="result">
                     <h3>计算结果</h3>
-                    <p>每月费用: <strong>${monthlyCost。toFixed(2)} 元</strong></p>
-                    <p>总金额 <strong>${amount。toFixed(2)} 元</strong> 可以使用：</p>
+                    <p>每月费用: <strong>${monthlyCost.toFixed(2)} 元</strong></p>
+                    <p>总金额 <strong>${amount.toFixed(2)} 元</strong> 可以使用：</p>
                     <p><span class="highlight">${months} 个月 ${days} 天</span>（共 ${totalDays} 天）</p>
-                    <p>开始日期: <strong>${startDate。toLocaleDateString('zh-CN')}</strong></p>
-                    <p>结束日期: <strong>${endDate。toLocaleDateString('zh-CN')}</strong></p>
-                    <p>剩余金额: <strong>${finalRemaining。toFixed(2)} 元</strong></p>
-                    <small>注：按每月30天计算，每天费用约为 ${dailyCost。toFixed(2)} 元</small>
+                    <p>开始日期: <strong>${formatDate(startDate)}</strong></p>
+                    <p>结束日期: <strong>${formatDate(endDate)}</strong></p>
+                    <p>剩余金额: <strong>${finalRemaining.toFixed(2)} 元</strong></p>
+                    <small>注：按每月30天计算，每天费用约为 ${dailyCost.toFixed(2)} 元</small>
                 </div>
             `;
         }
@@ -987,15 +990,15 @@
                 case 'hour': return '小时';
                 case 'day': return '天';
                 case 'month': return '月';
-                默认: return '';
+                default: return '';
             }
         }
         
         // 显示加载状态
         function showLoading(show) {
-            loadingElement。style。display = show ? 'block' : 'none';
-            convertBtn。disabled = show;
-            refreshBtn。disabled = show;
+            loadingElement.style.display = show ? 'block' : 'none';
+            convertBtn.disabled = show;
+            refreshBtn.disabled = show;
         }
         
         // 显示错误信息
@@ -1019,6 +1022,11 @@
                 minute: '2-digit',
                 second: '2-digit'
             });
+        }
+        
+        // 格式化日期
+        function formatDate(date) {
+            return date.toLocaleDateString('zh-CN');
         }
     </script>
 </body>
