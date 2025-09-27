@@ -1,0 +1,30 @@
+name: Sync Upstream Repository
+
+on:
+  schedule:
+    # 每天UTC时间2点自动同步
+    - cron: '0 2 * * *'
+  # 允许手动触发
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # 使用复刻仓库的默认分支
+          ref: ${{ github.ref }}
+
+      - name: Sync with upstream
+        uses: upstream-action@v1
+        with:
+          # 替换为原始仓库的 owner/repo
+          source_repo: "ORIGINAL_OWNER/ORIGINAL_REPO"
+          # 原始仓库的分支（通常是 main 或 master）
+          source_branch: "main"
+          # 复刻仓库的目标分支
+          target_branch: "main"
+          # GitHub 自动生成的 token
+          github_token: ${{ secrets.GITHUB_TOKEN }}
