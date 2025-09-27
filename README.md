@@ -52,8 +52,7 @@
 
 1.  **克隆仓库：**
     ```bash
-    git clone [https://github.com/](https://github.com/)[YOUR_USERNAME]/[YOUR_REPO_NAME].git
-    cd [YOUR_REPO_NAME]
+     https://github.com/chengege666/huilv
     ```
 
 2.  **打开文件：**
