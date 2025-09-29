@@ -439,7 +439,7 @@
             <div class="input-group">
                 <label class="input-label">金额</label>
                 <div class="input-container">
-                    <input type="number" class="input-field" id="amount" placeholder="输入金额" value="100">
+                    <input type="number" class="input-field" id="amount" step="0.01" min="0" placeholder="请输入金额">
                 </div>
             </div>
             
@@ -487,7 +487,7 @@
             
             <div class="result-container">
                 <div class="result-label">转换结果</div>
-                <div class="result-value" id="result">0.00</div>
+                <div class="result-value" id="result">-</div>
             </div>
             
             <div class="error-message" id="errorMessage"></div>
@@ -530,7 +530,7 @@
             <div class="input-group">
                 <label class="input-label">单位时间费用 (元)</label>
                 <div class="input-container">
-                    <input type="number" class="input-field" id="unit-cost" placeholder="例如：0.18" value="0.18" step="0.01" min="0">
+                    <input type="number" class="input-field" id="unit-cost" step="0.01" min="0" placeholder="请输入单位时间费用">
                 </div>
             </div>
             
@@ -550,7 +550,7 @@
             <div class="input-group">
                 <label class="input-label">使用时长</label>
                 <div class="input-container">
-                    <input type="number" class="input-field" id="usage-time" placeholder="例如：24" value="24" min="0" step="0.01">
+                    <input type="number" class="input-field" id="usage-time" min="0" step="0.01" placeholder="请填写时间">
                 </div>
             </div>
             
@@ -564,15 +564,15 @@
             <div class="time-result">
                 <div class="result-item">
                     <span class="result-label">单位时间费用：</span>
-                    <span class="result-value" id="unit-cost-result">0.00 元</span>
+                    <span class="result-value" id="unit-cost-result">-</span>
                 </div>
                 <div class="result-item">
                     <span class="result-label">使用时长：</span>
-                    <span class="result-value" id="usage-time-result">0</span>
+                    <span class="result-value" id="usage-time-result">-</span>
                 </div>
                 <div class="result-item">
                     <span class="result-label">总费用：</span>
-                    <span class="result-value highlight" id="total-cost">0.00 元</span>
+                    <span class="result-value highlight" id="total-cost">-</span>
                 </div>
             </div>
         </div>
@@ -596,14 +596,14 @@
             <div class="input-group">
                 <label class="input-label">每月费用（元）</label>
                 <div class="input-container">
-                    <input type="number" class="input-field" id="monthlyCost" placeholder="输入每月费用，例如13" step="0.01" min="0.01" value="13">
+                    <input type="number" class="input-field" id="monthlyCost" step="0.01" min="0.01" placeholder="请输入每月费用">
                 </div>
             </div>
             
             <div class="input-group">
                 <label class="input-label">总金额（元）</label>
                 <div class="input-container">
-                    <input type="number" class="input-field" id="totalAmount" placeholder="输入总金额" step="0.01" min="0.01" value="100">
+                    <input type="number" class="input-field" id="totalAmount" step="0.01" min="0.01" placeholder="请输入总金额">
                 </div>
             </div>
             
@@ -697,6 +697,8 @@
             amountInput.addEventListener('input', function() {
                 if (amountInput.value && Object.keys(exchangeRates).length > 0) {
                     convertCurrency();
+                } else {
+                    resultElement.textContent = '-';
                 }
             });
             
@@ -711,9 +713,6 @@
             monthlyCostInput.addEventListener('input', calculateTime);
             totalAmountInput.addEventListener('input', calculateTime);
             startDateInput.addEventListener('change', calculateTime);
-            
-            // 初始计算
-            calculateCost();
             
             // 设置默认开始日期为今天
             const today = new Date();
@@ -777,7 +776,7 @@
             const to = toCurrency.value;
             
             if (isNaN(amount) || amount <= 0) {
-                showError("请输入有效的金额");
+                resultElement.textContent = '-';
                 return;
             }
             
@@ -822,9 +821,9 @@
             const usageTime = parseFloat(usageTimeInput.value);
             
             if (isNaN(unitCost) || isNaN(usageTime) || unitCost < 0 || usageTime < 0) {
-                unitCostResult.textContent = '0.00 元';
-                usageTimeResult.textContent = '0';
-                totalCostResult.textContent = '0.00 元';
+                unitCostResult.textContent = '-';
+                usageTimeResult.textContent = '-';
+                totalCostResult.textContent = '-';
                 return;
             }
             
