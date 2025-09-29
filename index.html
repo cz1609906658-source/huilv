@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多功能计算器 - 汇率转换与费用计算</title>
+    <title>多功能计算器 - 汇率转换与时间计算</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -55,34 +55,45 @@
             margin: 0 auto;
         }
         
-        .main-container {
+        .tabs {
             display: flex;
-            gap: 30px;
-            max-width: 1400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 5px;
+            margin-bottom: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .tab.active {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tab-content {
+            display: none;
+            max-width: 800px;
             margin: 0 auto;
             width: 100%;
-            flex-wrap: wrap;
         }
         
-        .left-column {
-            flex: 1;
-            min-width: 300px;
-            max-width: 450px;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-        
-        .right-column {
-            flex: 1;
-            min-width: 300px;
-            max-width: 450px;
-            display: flex;
-            justify-content: center;
-        }
-        
-        .calculator-container {
-            width: 100%;
+        .tab-content.active {
+            display: block;
         }
         
         .card {
@@ -92,7 +103,6 @@
             box-shadow: var(--shadow);
             overflow: hidden;
             padding: 25px;
-            height: 100%;
             transition: transform 0.3s ease;
         }
         
@@ -330,13 +340,11 @@
             display: none;
         }
         
-        .cost-result {
+        .time-result {
             background: rgba(76, 201, 240, 0.1);
             border-radius: var(--border-radius);
             padding: 15px;
             margin-top: 15px;
-            text-align: center;
-            transition: var(--transition;
         }
         
         .result-item {
@@ -367,89 +375,38 @@
             text-align: center;
             color: white;
             padding: 25px;
-            margin-top: auto;
+            margin-top: 30px;
             font-size: 0.9rem;
             opacity: 0.8;
         }
         
-        .budget-container .card {
-            min-height: 580px;
-        }
-        
-        .budget-container .input-group {
-            margin: 15px 0;
-        }
-        
-        .budget-container .note {
+        .note {
             font-size: 12px;
             color: #6c757d;
             margin-top: 5px;
             text-align: center;
         }
         
-        .budget-container .error {
-            color: #e74c3c;
-            background-color: #ffeaea;
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 10px;
+        .date-inputs {
+            display: flex;
+            gap: 10px;
         }
         
-        .budget-container #result {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px dashed #ccc;
-            border-radius: var(--border-radius);
-            background-color: #f9f9f9;
-            text-align: left;
+        .date-inputs .input-group {
+            flex: 1;
         }
         
-        .budget-container #result h3 {
-            margin-bottom: 10px;
-            color: var(--dark);
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-        
-        .budget-container #result p {
-            margin: 8px 0;
-        }
-        
-        .budget-container #result small {
-            display: block;
-            margin-top: 10px;
-            font-size: 12px;
-            color: #6c757d;
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 1200px) {
-            .main-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .left-column, .right-column {
-                width: 100%;
-                max-width: 600px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .card {
-                padding: 20px;
-            }
-            
-            .card-title {
-                font-size: 22px;
-            }
-            
-            .action-buttons {
+        @media (max-width: 768px) {
+            .date-inputs {
                 flex-direction: column;
             }
             
             .header h1 {
                 font-size: 2.2rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
             }
         }
     </style>
@@ -457,268 +414,221 @@
 <body>
     <div class="header">
         <h1><i class="fas fa-calculator"></i> 三功能计算器</h1>
-        <p>汇率转换、费用计算与使用时间计算一站式解决方案</p>
+        <p>汇率转换、费用计算与时间计算一站式解决方案</p>
     </div>
     
-    <div class="main-container">
-        <!-- 左侧列：汇率转换器和时间计算器 -->
-        <div class="left-column">
-            <!-- 汇率转换器 -->
-            <div class="calculator-container">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-exchange-alt"></i>
-                        </div>
-                        <div>
-                            <h2 class="card-title">汇率转换器</h2>
-                            <p class="card-subtitle">实时汇率转换工具</p>
-                        </div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">金额</label>
-                        <div class="input-container">
-                            <input type="number" class="input-field" id="amount" placeholder="输入金额" value="100">
-                        </div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">从</label>
-                        <div class="input-container">
-                            <select class="select-field" id="fromCurrency">
-                                <option value="USD">美元 (USD)</option>
-                                <option value="EUR">欧元 (EUR)</option>
-                                <option value="GBP">英镑 (GBP)</option>
-                                <option value="JPY">日元 (JPY)</option>
-                                <option value="CNY" selected>人民币 (CNY)</option>
-                                <option value="CAD">加元 (CAD)</option>
-                                <option value="AUD">澳元 (AUD)</option>
-                                <option value="CHF">瑞士法郎 (CHF)</option>
-                            </select>
-                            <span class="select-icon">▼</span>
-                        </div>
-                    </div>
-                    
-                    <div class="swap-container">
-                        <button class="swap-btn" id="swapBtn">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M16 17L20 21M20 21L16 25M20 21H4M8 7L4 3M4 3L8 -1M4 3H20" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">到</label>
-                        <div class="input-container">
-                            <select class="select-field" id="toCurrency">
-                                <option value="USD" selected>美元 (USD)</option>
-                                <option value="EUR">欧元 (EUR)</option>
-                                <option value="GBP">英镑 (GBP)</option>
-                                <option value="JPY">日元 (JPY)</option>
-                                <option value="CNY">人民币 (CNY)</option>
-                                <option value="CAD">加元 (CAD)</option>
-                                <option value="AUD">澳元 (AUD)</option>
-                                <option value="CHF">瑞士法郎 (CHF)</option>
-                            </select>
-                            <span class="select-icon">▼</span>
-                        </div>
-                    </div>
-                    
-                    <div class="result-container">
-                        <div class="result-label">转换结果</div>
-                        <div class="result-value" id="result">0.00</div>
-                    </div>
-                    
-                    <div class="error-message" id="errorMessage"></div>
-                    
-                    <div class="loading" id="loading">
-                        <div class="loading-spinner"></div>
-                        <div>正在获取最新汇率...</div>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button class="btn btn-primary" id="convertBtn">
-                            <i class="fas fa-sync-alt btn-icon"></i>
-                            转换货币
-                        </button>
-                        <button class="btn btn-secondary" id="refreshBtn">
-                            <i class="fas fa-redo btn-icon"></i>
-                            刷新汇率
-                        </button>
-                    </div>
-                    
-                    <div class="last-updated" id="lastUpdated">
-                        最后更新: <span id="updateTime">正在获取...</span>
-                    </div>
+    <div class="tabs">
+        <button class="tab active" data-tab="exchange">汇率转换</button>
+        <button class="tab" data-tab="cost">费用计算</button>
+        <button class="tab" data-tab="time">时间计算</button>
+    </div>
+    
+    <!-- 汇率转换器 -->
+    <div id="exchange" class="tab-content active">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div>
+                    <h2 class="card-title">汇率转换器</h2>
+                    <p class="card-subtitle">实时汇率转换工具</p>
                 </div>
             </div>
             
-            <!-- 时间计算器 -->
-            <div class="calculator-container">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-calculator"></i>
-                        </div>
-                        <div>
-                            <h2 class="card-title">时间计算器</h2>
-                            <p class="card-subtitle">根据月费和总金额计算使用时间</p>
-                        </div>
-                    </div>
-                    
-                    <p class="note">每月按30天计算每日费用</p>
-                    
-                    <div class="input-group">
-                        <label class="input-label">每月费用（元）</label>
-                        <div class="input-container">
-                            <input type="number" class="input-field" id="monthlyCost" placeholder="输入每月费用，例如13" step="0.01" min="0.01" value="13">
-                        </div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">总金额（元）</label>
-                        <div class="input-container">
-                            <input type="number" class="input-field" id="totalAmount" placeholder="输入总金额" step="0.01" min="0.01" value="100">
-                        </div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">开始使用日期</label>
-                        <div class="input-container">
-                            <input type="date" class="input-field" id="startDate">
-                        </div>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button class="btn btn-primary" id="calculateBudgetBtn">
-                            <i class="fas fa-calculator btn-icon"></i>
-                            计算使用情况
-                        </button>
-                    </div>
-                    
-                    <div id="budgetResult"></div>
+            <div class="input-group">
+                <label class="input-label">金额</label>
+                <div class="input-container">
+                    <input type="number" class="input-field" id="amount" placeholder="输入金额" value="100">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">从</label>
+                <div class="input-container">
+                    <select class="select-field" id="fromCurrency">
+                        <option value="USD">美元 (USD)</option>
+                        <option value="EUR">欧元 (EUR)</option>
+                        <option value="GBP">英镑 (GBP)</option>
+                        <option value="JPY">日元 (JPY)</option>
+                        <option value="CNY" selected>人民币 (CNY)</option>
+                        <option value="CAD">加元 (CAD)</option>
+                        <option value="AUD">澳元 (AUD)</option>
+                        <option value="CHF">瑞士法郎 (CHF)</option>
+                    </select>
+                    <span class="select-icon">▼</span>
+                </div>
+            </div>
+            
+            <div class="swap-container">
+                <button class="swap-btn" id="swapBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 17L20 21M20 21L16 25M20 21H4M8 7L4 3M4 3L8 -1M4 3H20" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">到</label>
+                <div class="input-container">
+                    <select class="select-field" id="toCurrency">
+                        <option value="USD" selected>美元 (USD)</option>
+                        <option value="EUR">欧元 (EUR)</option>
+                        <option value="GBP">英镑 (GBP)</option>
+                        <option value="JPY">日元 (JPY)</option>
+                        <option value="CNY">人民币 (CNY)</option>
+                        <option value="CAD">加元 (CAD)</option>
+                        <option value="AUD">澳元 (AUD)</option>
+                        <option value="CHF">瑞士法郎 (CHF)</option>
+                    </select>
+                    <span class="select-icon">▼</span>
+                </div>
+            </div>
+            
+            <div class="result-container">
+                <div class="result-label">转换结果</div>
+                <div class="result-value" id="result">0.00</div>
+            </div>
+            
+            <div class="error-message" id="errorMessage"></div>
+            
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <div>正在获取最新汇率...</div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="convertBtn">
+                    <i class="fas fa-sync-alt btn-icon"></i>
+                    转换货币
+                </button>
+                <button class="btn btn-secondary" id="refreshBtn">
+                    <i class="fas fa-redo btn-icon"></i>
+                    刷新汇率
+                </button>
+            </div>
+            
+            <div class="last-updated" id="lastUpdated">
+                最后更新: <span id="updateTime">正在获取...</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 费用计算器 -->
+    <div id="cost" class="tab-content">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div>
+                    <h2 class="card-title">费用计算器</h2>
+                    <p class="card-subtitle">计算费用与使用时间</p>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">单位时间费用 (元)</label>
+                <div class="input-container">
+                    <input type="number" class="input-field" id="unit-cost" placeholder="例如：0.18" value="0.18" step="0.01" min="0">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">时间单位</label>
+                <div class="input-container">
+                    <select class="select-field" id="time-unit">
+                        <option value="hour">每小时</option>
+                        <option value="day">每天</option>
+                        <option value="month">每月</option>
+                        <option value="year">每年</option>
+                    </select>
+                    <span class="select-icon">▼</span>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">使用时长</label>
+                <div class="input-container">
+                    <input type="number" class="input-field" id="usage-time" placeholder="例如：24" value="24" min="0" step="0.01">
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="calculateCostBtn">
+                    <i class="fas fa-calculator btn-icon"></i>
+                    计算费用
+                </button>
+            </div>
+            
+            <div class="time-result">
+                <div class="result-item">
+                    <span class="result-label">单位时间费用：</span>
+                    <span class="result-value" id="unit-cost-result">0.00 元</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">使用时长：</span>
+                    <span class="result-value" id="usage-time-result">0</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">总费用：</span>
+                    <span class="result-value highlight" id="total-cost">0.00 元</span>
                 </div>
             </div>
         </div>
-        
-        <!-- 右侧列：费用计算器 -->
-        <div class="right-column">
-            <!-- 费用计算器 -->
-            <div class="calculator-container">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div>
-                            <h2 class="card-title">费用计算器</h2>
-                            <p class="card-subtitle">计算费用与使用时间</p>
-                        </div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">单位时间费用 (元)</label>
-                        <div class="input-container">
-                            <input type="number" class="input-field" id="unit-cost" placeholder="例如：0.18" value="0.18">
-                        </div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">时间单位</label>
-                        <div class="input-container">
-                            <select class="select-field" id="time-unit">
-                                <option value="hour">每小时</option>
-                                <option value="day">每天</option>
-                                <option value="month">每月</option>
-                            </select>
-                            <span class="select-icon">▼</span>
-                        </div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">使用时长</label>
-                        <div class="input-container">
-                            <input type="number" class="input-field" id="usage-time" placeholder="例如：24" value="24">
-                        </div>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button class="btn btn-primary" id="calculateCostBtn">
-                            <i class="fas fa-calculator btn-icon"></i>
-                            计算费用
-                        </button>
-                    </div>
-                    
-                    <div class="cost-result">
-                        <div class="result-item">
-                            <span class="result-label">单位时间费用：</span>
-                            <span class="result-value" id="unit-cost-result">0.00 元</span>
-                        </div>
-                        <div class="result-item">
-                            <span class="result-label">使用时长：</span>
-                            <span class="result-value" id="usage-time-result">0</span>
-                        </div>
-                        <div class="result-item">
-                            <span class="result-label">总费用：</span>
-                            <span class="result-value highlight" id="total-cost">0.00 元</span>
-                        </div>
-                    </div>
-                    
-                    <div class="input-group" style="margin-top: 25px;">
-                        <label class="input-label">总金额 (元)</label>
-                        <div class="input-container">
-                            <input type="number" class="input-field" id="total-amount" placeholder="例如：100" value="100">
-                        </div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">单位时间费用 (元)</label>
-                        <div class="input-container">
-                            <input type="number" class="input-field" id="cost-per-unit" placeholder="例如：0.18" value="5">
-                        </div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">时间单位</label>
-                        <div class="input-container">
-                            <select class="select-field" id="time-unit-usage">
-                                <option value="hour">每小时</option>
-                                <option value="day">每天</option>
-                                <option value="month">每月</option>
-                            </select>
-                            <span class="select-icon">▼</span>
-                        </div>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button class="btn btn-primary" id="calculateUsageBtn">
-                            <i class="fas fa-hourglass-half btn-icon"></i>
-                            计算使用时间
-                        </button>
-                    </div>
-                    
-                    <div class="cost-result">
-                        <div class="result-item">
-                            <span class="result-label">总金额：</span>
-                            <span class="result-value" id="total-amount-result">0.00 元</span>
-                        </div>
-                        <div class="result-item">
-                            <span class="result-label">单位时间费用：</span>
-                            <span class="result-value" id="cost-per-unit-result">0.00 元</span>
-                        </div>
-                        <div class="result-item">
-                            <span class="result-label">可使用时间：</span>
-                            <span class="result-value highlight" id="usable-time">0</span>
-                        </div>
-                    </div>
+    </div>
+    
+    <!-- 时间计算器 -->
+    <div id="time" class="tab-content">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-clock"></i>
                 </div>
+                <div>
+                    <h2 class="card-title">时间计算器</h2>
+                    <p class="card-subtitle">根据费用计算使用时间</p>
+                </div>
+            </div>
+            
+            <p class="note">每月按30天计算每日费用</p>
+            
+            <div class="input-group">
+                <label class="input-label">每月费用（元）</label>
+                <div class="input-container">
+                    <input type="number" class="input-field" id="monthlyCost" placeholder="输入每月费用，例如13" step="0.01" min="0.01" value="13">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">总金额（元）</label>
+                <div class="input-container">
+                    <input type="number" class="input-field" id="totalAmount" placeholder="输入总金额" step="0.01" min="0.01" value="100">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">开始使用日期</label>
+                <div class="input-container">
+                    <input type="date" class="input-field" id="startDate">
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="calculateTimeBtn">
+                    <i class="fas fa-calculator btn-icon"></i>
+                    计算使用时间
+                </button>
+            </div>
+            
+            <div id="timeResult" class="time-result">
+                <!-- 结果将在这里显示 -->
             </div>
         </div>
     </div>
     
     <div class="footer">
-        <p>© 2025 三功能计算器 | 实时汇率与费用计算工具</p>
+        <p>© 2025 三功能计算器 | 实时汇率与时间计算工具</p>
     </div>
 
     <script>
@@ -748,23 +658,33 @@
         const usageTimeResult = document.getElementById('usage-time-result');
         const totalCostResult = document.getElementById('total-cost');
         
-        const totalAmountInput = document.getElementById('total-amount');
-        const costPerUnitInput = document.getElementById('cost-per-unit');
-        const timeUnitUsageSelect = document.getElementById('time-unit-usage');
-        const calculateUsageBtn = document.getElementById('calculateUsageBtn');
-        const totalAmountResult = document.getElementById('total-amount-result');
-        const costPerUnitResult = document.getElementById('cost-per-unit-result');
-        const usableTimeResult = document.getElementById('usable-time');
-        
         // 时间计算器DOM元素
         const monthlyCostInput = document.getElementById('monthlyCost');
-        const totalAmountBudgetInput = document.getElementById('totalAmount');
+        const totalAmountInput = document.getElementById('totalAmount');
         const startDateInput = document.getElementById('startDate');
-        const calculateBudgetBtn = document.getElementById('calculateBudgetBtn');
-        const budgetResult = document.getElementById('budgetResult');
+        const calculateTimeBtn = document.getElementById('calculateTimeBtn');
+        const timeResult = document.getElementById('timeResult');
+        
+        // 标签页切换
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
         
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
+            // 设置标签页事件
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    // 更新活动标签
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(tc => tc.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
             // 加载初始汇率
             fetchExchangeRates();
             
@@ -782,14 +702,18 @@
             
             // 费用计算器事件
             calculateCostBtn.addEventListener('click', calculateCost);
-            calculateUsageBtn.addEventListener('click', calculateUsage);
+            unitCostInput.addEventListener('input', calculateCost);
+            timeUnitSelect.addEventListener('change', calculateCost);
+            usageTimeInput.addEventListener('input', calculateCost);
             
             // 时间计算器事件
-            calculateBudgetBtn.addEventListener('click', calculateBudget);
+            calculateTimeBtn.addEventListener('click', calculateTime);
+            monthlyCostInput.addEventListener('input', calculateTime);
+            totalAmountInput.addEventListener('input', calculateTime);
+            startDateInput.addEventListener('change', calculateTime);
             
             // 初始计算
             calculateCost();
-            calculateUsage();
             
             // 设置默认开始日期为今天
             const today = new Date();
@@ -897,8 +821,10 @@
             const timeUnit = timeUnitSelect.value;
             const usageTime = parseFloat(usageTimeInput.value);
             
-            if (isNaN(unitCost) || isNaN(usageTime) || unitCost <= 0 || usageTime <= 0) {
-                alert('请输入有效的正数');
+            if (isNaN(unitCost) || isNaN(usageTime) || unitCost < 0 || usageTime < 0) {
+                unitCostResult.textContent = '0.00 元';
+                usageTimeResult.textContent = '0';
+                totalCostResult.textContent = '0.00 元';
                 return;
             }
             
@@ -909,78 +835,76 @@
             totalCostResult.textContent = totalCost.toFixed(2) + ' 元';
         }
         
-        // 计算使用时间函数
-        function calculateUsage() {
-            const totalAmount = parseFloat(totalAmountInput.value);
-            const costPerUnit = parseFloat(costPerUnitInput.value);
-            const timeUnit = timeUnitUsageSelect.value;
-            
-            if (isNaN(totalAmount) || isNaN(costPerUnit) || totalAmount <= 0 || costPerUnit <= 0) {
-                alert('请输入有效的正数');
-                return;
-            }
-            
-            const usableTime = totalAmount / costPerUnit;
-            
-            totalAmountResult.textContent = totalAmount.toFixed(2) + ' 元';
-            costPerUnitResult.textContent = costPerUnit.toFixed(2) + ' 元/' + getUnitLabel(timeUnit);
-            usableTimeResult.textContent = usableTime.toFixed(2) + ' ' + getUnitLabel(timeUnit);
-        }
-        
-        // 时间计算器函数
-        function calculateBudget() {
+        // 时间计算器函数 - 根据开始日期、总金额和每月花费计算结束日期
+        function calculateTime() {
             const monthlyCost = parseFloat(monthlyCostInput.value);
-            const amount = parseFloat(totalAmountBudgetInput.value);
+            const amount = parseFloat(totalAmountInput.value);
             const startDateStr = startDateInput.value;
             
             // 输入验证
             if (isNaN(monthlyCost) || monthlyCost <= 0) {
-                budgetResult.innerHTML = '<div class="error">请输入有效的每月费用（正数）</div>';
+                timeResult.innerHTML = '<div class="error-message">请输入有效的每月费用（正数）</div>';
                 return;
             }
+            
             if (isNaN(amount) || amount <= 0) {
-                budgetResult.innerHTML = '<div class="error">请输入有效的总金额（正数）</div>';
+                timeResult.innerHTML = '<div class="error-message">请输入有效的总金额（正数）</div>';
                 return;
             }
+            
             if (!startDateStr) {
-                budgetResult.innerHTML = '<div class="error">请选择开始日期</div>';
+                timeResult.innerHTML = '<div class="error-message">请选择开始日期</div>';
                 return;
             }
             
-            // 计算月数（取整，不足一月不计算）
-            const months = Math.floor(amount / monthlyCost);
+            const startDate = new Date(startDateStr);
             
-            // 计算剩余金额
-            const remainingAmount = amount - (months * monthlyCost);
+            // 计算每日费用
+            const dailyCost = monthlyCost / 30;
             
-            // 计算天数（按30天一个月计算）
-            const daysPerMonth = 30;
-            const dailyCost = monthlyCost / daysPerMonth;
-            const days = Math.floor(remainingAmount / dailyCost);
-            
-            // 计算总天数
-            const totalDays = months * 30 + days;
+            // 计算可用天数
+            const availableDays = Math.floor(amount / dailyCost);
             
             // 计算结束日期
-            const startDate = new Date(startDateStr);
             const endDate = new Date(startDate);
-            endDate.setDate(startDate.getDate() + totalDays);
+            endDate.setDate(startDate.getDate() + availableDays);
             
-            // 计算剩余金额（精确到分）
-            const finalRemaining = remainingAmount - (days * dailyCost);
+            // 计算实际花费
+            const actualCost = availableDays * dailyCost;
+            
+            // 计算剩余金额
+            const remainingAmount = amount - actualCost;
+            
+            // 计算月数和天数
+            const months = Math.floor(availableDays / 30);
+            const days = availableDays % 30;
             
             // 显示结果
-            budgetResult.innerHTML = `
-                <div id="result">
-                    <h3>计算结果</h3>
-                    <p>每月费用: <strong>${monthlyCost.toFixed(2)} 元</strong></p>
-                    <p>总金额 <strong>${amount.toFixed(2)} 元</strong> 可以使用：</p>
-                    <p><span class="highlight">${months} 个月 ${days} 天</span>（共 ${totalDays} 天）</p>
-                    <p>开始日期: <strong>${formatDate(startDate)}</strong></p>
-                    <p>结束日期: <strong>${formatDate(endDate)}</strong></p>
-                    <p>剩余金额: <strong>${finalRemaining.toFixed(2)} 元</strong></p>
-                    <small>注：按每月30天计算，每天费用约为 ${dailyCost.toFixed(2)} 元</small>
+            timeResult.innerHTML = `
+                <div class="result-item">
+                    <span class="result-label">可用时长：</span>
+                    <span class="result-value">${months} 个月 ${days} 天（共 ${availableDays} 天）</span>
                 </div>
+                <div class="result-item">
+                    <span class="result-label">开始日期：</span>
+                    <span class="result-value">${formatDate(startDate)}</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">结束日期：</span>
+                    <span class="result-value">${formatDate(endDate)}</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">实际花费：</span>
+                    <span class="result-value">${actualCost.toFixed(2)} 元</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">剩余金额：</span>
+                    <span class="result-value ${remainingAmount < 0 ? 'highlight' : ''}">${remainingAmount.toFixed(2)} 元</span>
+                </div>
+                ${remainingAmount < 0 ? 
+                    '<div class="error-message" style="margin-top:10px;display:block;">金额不足，请增加预算</div>' : 
+                    '<div class="note" style="margin-top:10px;">金额充足，可以覆盖使用期间的费用</div>'
+                }
             `;
         }
         
@@ -990,6 +914,7 @@
                 case 'hour': return '小时';
                 case 'day': return '天';
                 case 'month': return '月';
+                case 'year': return '年';
                 default: return '';
             }
         }
