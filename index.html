@@ -479,7 +479,7 @@
                     <div class="input-group">
                         <label class="input-label">金额</label>
                         <div class="input-container">
-                            <input type="number" class="input-field" id="amount" placeholder="输入金额" value="100">
+                            <input type="number" class="input-field" id="amount" placeholder="请输入金额" value="">
                         </div>
                     </div>
                     
@@ -487,14 +487,19 @@
                         <label class="input-label">从</label>
                         <div class="input-container">
                             <select class="select-field" id="fromCurrency">
+                                <option value="CNY" selected>人民币 (CNY)</option>
                                 <option value="USD">美元 (USD)</option>
                                 <option value="EUR">欧元 (EUR)</option>
                                 <option value="GBP">英镑 (GBP)</option>
                                 <option value="JPY">日元 (JPY)</option>
-                                <option value="CNY" selected>人民币 (CNY)</option>
                                 <option value="CAD">加元 (CAD)</option>
                                 <option value="AUD">澳元 (AUD)</option>
                                 <option value="CHF">瑞士法郎 (CHF)</option>
+                                <option value="HKD">港币 (HKD)</option>
+                                <option value="KRW">韩元 (KRW)</option>
+                                <option value="TWD">新台币 (TWD)</option>
+                                <option value="SGD">新加坡元 (SGD)</option>
+                                <option value="THB">泰铢 (THB)</option>
                             </select>
                             <span class="select-icon">▼</span>
                         </div>
@@ -513,13 +518,18 @@
                         <div class="input-container">
                             <select class="select-field" id="toCurrency">
                                 <option value="USD" selected>美元 (USD)</option>
+                                <option value="CNY">人民币 (CNY)</option>
                                 <option value="EUR">欧元 (EUR)</option>
                                 <option value="GBP">英镑 (GBP)</option>
                                 <option value="JPY">日元 (JPY)</option>
-                                <option value="CNY">人民币 (CNY)</option>
                                 <option value="CAD">加元 (CAD)</option>
                                 <option value="AUD">澳元 (AUD)</option>
                                 <option value="CHF">瑞士法郎 (CHF)</option>
+                                <option value="HKD">港币 (HKD)</option>
+                                <option value="KRW">韩元 (KRW)</option>
+                                <option value="TWD">新台币 (TWD)</option>
+                                <option value="SGD">新加坡元 (SGD)</option>
+                                <option value="THB">泰铢 (THB)</option>
                             </select>
                             <span class="select-icon">▼</span>
                         </div>
@@ -572,14 +582,14 @@
                     <div class="input-group">
                         <label class="input-label">每月费用（元）</label>
                         <div class="input-container">
-                            <input type="number" class="input-field" id="monthlyCost" placeholder="输入每月费用，例如13" step="0.01" min="0.01" value="13">
+                            <input type="number" class="input-field" id="monthlyCost" placeholder="请输入每月费用" step="0.01" min="0.01" value="">
                         </div>
                     </div>
                     
                     <div class="input-group">
                         <label class="input-label">总金额（元）</label>
                         <div class="input-container">
-                            <input type="number" class="input-field" id="totalAmount" placeholder="输入总金额" step="0.01" min="0.01" value="100">
+                            <input type="number" class="input-field" id="totalAmount" placeholder="请输入总金额" step="0.01" min="0.01" value="">
                         </div>
                     </div>
                     
@@ -620,7 +630,7 @@
                     <div class="input-group">
                         <label class="input-label">单位时间费用 (元)</label>
                         <div class="input-container">
-                            <input type="number" class="input-field" id="unit-cost" placeholder="例如：0.18" value="0.18">
+                            <input type="number" class="input-field" id="unit-cost" placeholder="请输入单位费用" value="">
                         </div>
                     </div>
                     
@@ -639,7 +649,7 @@
                     <div class="input-group">
                         <label class="input-label">使用时长</label>
                         <div class="input-container">
-                            <input type="number" class="input-field" id="usage-time" placeholder="例如：24" value="24">
+                            <input type="number" class="input-field" id="usage-time" placeholder="请输入时间" value="">
                         </div>
                     </div>
                     
@@ -668,14 +678,14 @@
                     <div class="input-group" style="margin-top: 25px;">
                         <label class="input-label">总金额 (元)</label>
                         <div class="input-container">
-                            <input type="number" class="input-field" id="total-amount" placeholder="例如：100" value="100">
+                            <input type="number" class="input-field" id="total-amount-calc" placeholder="请输入总金额" value="">
                         </div>
                     </div>
                     
                     <div class="input-group">
                         <label class="input-label">单位时间费用 (元)</label>
                         <div class="input-container">
-                            <input type="number" class="input-field" id="cost-per-unit" placeholder="例如：0.18" value="5">
+                            <input type="number" class="input-field" id="cost-per-unit" placeholder="请输入单位费用" value="">
                         </div>
                     </div>
                     
@@ -723,7 +733,6 @@
 
     <script>
         // 汇率转换器功能
-        // 汇率数据缓存
         let exchangeRates = {};
         let lastUpdated = null;
         
@@ -739,7 +748,7 @@
         const loadingElement = document.getElementById('loading');
         const errorMessage = document.getElementById('errorMessage');
         
-        // 费用计算器DOM元素
+        // 费用计算器（计算总费用）DOM元素
         const unitCostInput = document.getElementById('unit-cost');
         const timeUnitSelect = document.getElementById('time-unit');
         const usageTimeInput = document.getElementById('usage-time');
@@ -748,7 +757,8 @@
         const usageTimeResult = document.getElementById('usage-time-result');
         const totalCostResult = document.getElementById('total-cost');
         
-        const totalAmountInput = document.getElementById('total-amount');
+        // 费用计算器（计算可使用时间）DOM元素
+        const totalAmountCalcInput = document.getElementById('total-amount-calc');
         const costPerUnitInput = document.getElementById('cost-per-unit');
         const timeUnitUsageSelect = document.getElementById('time-unit-usage');
         const calculateUsageBtn = document.getElementById('calculateUsageBtn');
@@ -765,31 +775,21 @@
         
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 加载初始汇率
             fetchExchangeRates();
             
-            // 添加事件监听器
             convertBtn.addEventListener('click', convertCurrency);
             refreshBtn.addEventListener('click', fetchExchangeRates);
             swapBtn.addEventListener('click', swapCurrencies);
             
-            // 输入框实时转换
             amountInput.addEventListener('input', function() {
                 if (amountInput.value && Object.keys(exchangeRates).length > 0) {
                     convertCurrency();
                 }
             });
             
-            // 费用计算器事件
             calculateCostBtn.addEventListener('click', calculateCost);
             calculateUsageBtn.addEventListener('click', calculateUsage);
-            
-            // 时间计算器事件
             calculateBudgetBtn.addEventListener('click', calculateBudget);
-            
-            // 初始计算
-            calculateCost();
-            calculateUsage();
             
             // 设置默认开始日期为今天
             const today = new Date();
@@ -799,12 +799,10 @@
             startDateInput.value = `${year}-${month}-${day}`;
         });
         
-        // 获取汇率数据 - 已修改为真实API
         async function fetchExchangeRates() {
             showLoading(true);
             hideError();
     
-            // 已将您的API密钥填入
             const apiKey = '959ec28f8bf8c08f160ff7a2'; 
             const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`;
     
@@ -819,23 +817,17 @@
                     exchangeRates = data.conversion_rates;
                     lastUpdated = new Date(data.time_last_update_utc);
                     
-                    // 更新UI
                     if (updateTime) {
                         updateTime.textContent = formatDateTime(lastUpdated);
                     }
                     
-                    // 如果有金额输入，自动转换
                     if (amountInput.value) {
                         convertCurrency();
                     }
                 } else {
-                    // 处理API返回的错误，例如无效的密钥
                     let apiError = data['error-type'] || '未知API错误';
-                    if (apiError === 'invalid-key') {
-                        apiError = 'API密钥无效或错误';
-                    } else if (apiError === 'inactive-account') {
-                        apiError = 'API账户未激活';
-                    }
+                    if (apiError === 'invalid-key') apiError = 'API密钥无效或错误';
+                    else if (apiError === 'inactive-account') apiError = 'API账户未激活';
                     throw new Error(apiError);
                 }
     
@@ -847,7 +839,6 @@
             }
         }
         
-        // 货币转换
         function convertCurrency() {
             hideError();
             
@@ -855,13 +846,9 @@
             const from = fromCurrency.value;
             const to = toCurrency.value;
             
-            if (isNaN(amount) || amount < 0) {
-                showError("请输入有效的金额");
+            if (!amountInput.value || isNaN(amount) || amount < 0) {
                 resultElement.textContent = "0.00";
-                return;
-            }
-             if (amount === 0) {
-                resultElement.textContent = "0.00";
+                if (amount < 0) showError("金额不能为负数");
                 return;
             }
             
@@ -879,11 +866,9 @@
             }
             
             const convertedAmount = (amount / rateFrom) * rateTo;
-            
             resultElement.textContent = convertedAmount.toFixed(2);
         }
     
-        // 交换货币
         function swapCurrencies() {
             const temp = fromCurrency.value;
             fromCurrency.value = toCurrency.value;
@@ -894,30 +879,30 @@
             }
         }
         
-        // 计算费用函数
         function calculateCost() {
             const unitCost = parseFloat(unitCostInput.value);
             const timeUnit = timeUnitSelect.value;
             const usageTime = parseFloat(usageTimeInput.value);
             
             if (isNaN(unitCost) || isNaN(usageTime) || unitCost <= 0 || usageTime <= 0) {
+                alert('请输入有效的正数进行费用计算');
                 return;
             }
             
             const totalCost = unitCost * usageTime;
             
             unitCostResult.textContent = unitCost.toFixed(2) + ' 元/' + getUnitLabel(timeUnit);
-            usageTimeResult.textContent = usageTime + ' ' + getUnitLabel(timeUnit);
+            usageTimeResult.textContent = usageTime + ' ' + getUnitLabel(timeUnit, true);
             totalCostResult.textContent = totalCost.toFixed(2) + ' 元';
         }
         
-        // 计算使用时间函数
         function calculateUsage() {
-            const totalAmount = parseFloat(totalAmountInput.value);
+            const totalAmount = parseFloat(totalAmountCalcInput.value);
             const costPerUnit = parseFloat(costPerUnitInput.value);
             const timeUnit = timeUnitUsageSelect.value;
             
             if (isNaN(totalAmount) || isNaN(costPerUnit) || totalAmount <= 0 || costPerUnit <= 0) {
+                alert('请输入有效的正数进行使用时间计算');
                 return;
             }
             
@@ -925,10 +910,9 @@
             
             totalAmountResult.textContent = totalAmount.toFixed(2) + ' 元';
             costPerUnitResult.textContent = costPerUnit.toFixed(2) + ' 元/' + getUnitLabel(timeUnit);
-            usableTimeResult.textContent = usableTime.toFixed(2) + ' ' + getUnitLabel(timeUnit);
+            usableTimeResult.textContent = usableTime.toFixed(2) + ' ' + getUnitLabel(timeUnit, true);
         }
         
-        // 时间计算器函数
         function calculateBudget() {
             const monthlyCost = parseFloat(monthlyCostInput.value);
             const amount = parseFloat(totalAmountBudgetInput.value);
@@ -972,8 +956,7 @@
             `;
         }
         
-        // 获取时间单位标签
-        function getUnitLabel(unit) {
+        function getUnitLabel(unit, isPlural = false) {
             switch(unit) {
                 case 'hour': return '小时';
                 case 'day': return '天';
@@ -982,39 +965,30 @@
             }
         }
         
-        // 显示加载状态
         function showLoading(show) {
             loadingElement.style.display = show ? 'block' : 'none';
             convertBtn.disabled = show;
             refreshBtn.disabled = show;
         }
         
-        // 显示错误信息
         function showError(message) {
             errorMessage.textContent = message;
             errorMessage.style.display = 'block';
         }
         
-        // 隐藏错误信息
         function hideError() {
             errorMessage.style.display = 'none';
         }
         
-        // 格式化日期时间
         function formatDateTime(date) {
             return date.toLocaleString('zh-CN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
             });
         }
         
-        // 格式化日期
         function formatDate(date) {
-            return date.toLocaleString('zh-CN');
+            return date.toLocaleDateString('zh-CN');
         }
     </script>
 </body>
