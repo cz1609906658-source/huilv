@@ -776,7 +776,7 @@
                                         class="input-field" 
                                         id="savings-targetAmount" 
                                         v-model.number="targetAmount" 
-                                        placeholder="请输入目标金额，例如：50000"
+                                        placeholder="请输入目标金额"
                                         min="0">
                                 </div>
                             </div>
@@ -789,7 +789,7 @@
                                         class="input-field" 
                                         id="savings-targetTime" 
                                         v-model.number="timeValue" 
-                                        placeholder="请输入时间数值，例如：12"
+                                        placeholder="请输入时间数值"
                                         min="1">
                                     <select class="select-field" v-model="timeUnit" style="margin-top: 10px;">
                                         <option value="months">月</option>
@@ -808,7 +808,7 @@
                                         class="input-field" 
                                         id="savings-monthlyDeposit" 
                                         v-model.number="monthlyDeposit" 
-                                        placeholder="请输入每月存款金额，例如：2000"
+                                        placeholder="请输入每月存款金额"
                                         min="0">
                                 </div>
                             </div>
@@ -821,7 +821,7 @@
                                         class="input-field" 
                                         id="savings-timeValue" 
                                         v-model.number="timeValue" 
-                                        placeholder="请输入时间数值，例如：24"
+                                        placeholder="请输入时间数值"
                                         min="1">
                                     <select class="select-field" v-model="timeUnit" style="margin-top: 10px;">
                                         <option value="months">月</option>
@@ -840,7 +840,7 @@
                                         class="input-field" 
                                         id="savings-timeTargetAmount" 
                                         v-model.number="targetAmount" 
-                                        placeholder="请输入目标金额，例如：30000"
+                                        placeholder="请输入目标金额"
                                         min="0">
                                 </div>
                             </div>
@@ -853,7 +853,7 @@
                                         class="input-field" 
                                         id="savings-monthlyDepositTime" 
                                         v-model.number="monthlyDeposit" 
-                                        placeholder="请输入每月存款金额，例如：1500"
+                                        placeholder="请输入每月存款金额"
                                         min="0">
                                 </div>
                             </div>
@@ -867,7 +867,7 @@
                                     class="input-field" 
                                     id="savings-initialAmount" 
                                     v-model.number="initialAmount" 
-                                    placeholder="请输入初始存款金额，例如：5000"
+                                    placeholder="请输入初始存款金额"
                                     min="0">
                             </div>
                         </div>
@@ -902,7 +902,7 @@
                             <div v-if="currentMode === 'target'">
                                 <div class="savings-result-value">{{ formatCurrency(requiredMonthlyDeposit) }}</div>
                                 <div class="savings-result-label">每月需要存款金额</div>
-                                <div v-if="['weekly', 'yearly'].includes(frequency)" style="margin-top: 10px;">
+                                <div v-if="['weekly', 'yearly'].includes(frequency) && requiredMonthlyDeposit > 0" style="margin-top: 10px;">
                                     按{{ frequency === 'weekly' ? '每周' : '每年' }}存款: 
                                     <strong>{{ formatCurrency(frequencyAmount) }}</strong>
                                 </div>
@@ -914,7 +914,7 @@
                             </div>
                             
                             <div v-if="currentMode === 'time'">
-                                <div class="savings-result-value">{{ requiredMonths }}</div>
+                                <div class="savings-result-value">{{ requiredMonths > 0 ? requiredMonths : 0 }}</div>
                                 <div class="savings-result-label">需要存款月数</div>
                                 <div v-if="requiredMonths > 0" style="margin-top: 10px;">
                                     约 {{ Math.floor(requiredMonths / 12) }} 年 {{ requiredMonths % 12 }} 个月
@@ -1134,69 +1134,81 @@
                     el: '#savings-calc-app',
                     data: {
                         currentMode: 'target', // target, amount, time
-                        targetAmount: 50000,   // 填写默认值
-                        monthlyDeposit: 2000,  // 填写默认值
-                        initialAmount: 0,      // 填写默认值
-                        timeValue: 12,         // 填写默认值
+                        targetAmount: null,    // 清空默认值
+                        monthlyDeposit: null,  // 清空默认值
+                        initialAmount: null,   // 清空默认值
+                        timeValue: null,       // 清空默认值
                         timeUnit: 'months',
                         frequency: 'monthly', // weekly, monthly, yearly
                         savingsChart: null
                     },
                     computed: {
+                        // 确保所有输入均为有效数字，否则返回 0
+                        validTargetAmount() { return parseFloat(this.targetAmount) || 0; },
+                        validMonthlyDeposit() { return parseFloat(this.monthlyDeposit) || 0; },
+                        validInitialAmount() { return parseFloat(this.initialAmount) || 0; },
+                        validTimeValue() { return parseFloat(this.timeValue) || 0; },
+
                         // 计算总月数
                         totalMonths() {
                             if (this.timeUnit === 'years') {
-                                return this.timeValue * 12;
+                                return this.validTimeValue * 12;
                             }
-                            return this.timeValue;
+                            return this.validTimeValue;
                         },
                         
                         // 目标模式：计算每月需要存款金额
                         requiredMonthlyDeposit() {
-                            // 确保总月数大于0
-                            if (this.totalMonths <= 0 || this.targetAmount <= this.initialAmount) return 0;
-                            // 确保目标金额大于初始金额
-                            if (this.targetAmount <= this.initialAmount) return 0;
+                            const target = this.validTargetAmount;
+                            const initial = this.validInitialAmount;
+                            const months = this.totalMonths;
+
+                            if (months <= 0 || target <= initial) return 0;
                             
-                            return (this.targetAmount - this.initialAmount) / this.totalMonths;
+                            // 返回每月的存款要求，保留两位小数
+                            return ((target - initial) / months).toFixed(2);
                         },
                         
                         // 总额模式：计算到期总金额
                         totalAmount() {
-                            return this.initialAmount + (this.monthlyDeposit * this.totalMonths);
+                            const initial = this.validInitialAmount;
+                            const monthly = this.validMonthlyDeposit;
+                            const months = this.totalMonths;
+
+                            return (initial + (monthly * months)).toFixed(2);
                         },
                         
-                        // 时间模式：计算需要存款月数
+                        // 时间模式：计算需要存款月数 (向上取整)
                         requiredMonths() {
-                            if (this.monthlyDeposit <= 0) return 0;
-                            // 确保目标金额大于初始金额
-                            if (this.targetAmount <= this.initialAmount) return 0;
+                            const target = this.validTargetAmount;
+                            const initial = this.validInitialAmount;
+                            const monthly = this.validMonthlyDeposit;
 
-                            return Math.ceil((this.targetAmount - this.initialAmount) / this.monthlyDeposit);
+                            if (monthly <= 0 || target <= initial) return 0;
+
+                            return Math.ceil((target - initial) / monthly);
                         },
                         
                         // 根据频率计算每次存款金额
                         frequencyAmount() {
-                            if (this.requiredMonthlyDeposit === 0) return 0;
+                            const requiredMonthly = parseFloat(this.requiredMonthlyDeposit);
+                            if (requiredMonthly <= 0) return 0;
                             if (this.frequency === 'weekly') {
-                                return this.requiredMonthlyDeposit / 4.33; // 近似按每月4.33周
+                                return (requiredMonthly / 4.33).toFixed(2); // 近似按每月4.33周
                             } else if (this.frequency === 'yearly') {
-                                return this.requiredMonthlyDeposit * 12;
+                                return (requiredMonthly * 12).toFixed(2);
                             }
-                            return this.requiredMonthlyDeposit;
+                            return requiredMonthly;
                         },
                         
                         // 计算进度百分比
                         progressPercentage() {
-                            if (this.currentMode === 'target' || this.currentMode === 'time') {
-                                if (this.targetAmount <= 0) return 0;
-                                return Math.min(100, Math.round((this.initialAmount / this.targetAmount) * 100));
-                            }
-                            // 'amount' 模式计算的是预期总额，用目标金额（默认为50000）作为参考，或只显示初始金额占比
-                            if (this.targetAmount > 0) {
-                                return Math.min(100, Math.round((this.initialAmount / this.targetAmount) * 100));
-                            }
-                            return 0; // 默认不显示进度条
+                            const target = this.validTargetAmount;
+                            const initial = this.validInitialAmount;
+                            
+                            if (target <= 0) return 0;
+                            
+                            return Math.min(100, Math.round((initial / target) * 100));
                         },
                         
                         // 频率文本显示
@@ -1212,38 +1224,46 @@
                         // 生成储蓄进度数据
                         savingsData() {
                             const data = [];
-                            let currentAmount = this.initialAmount;
+                            let currentAmount = this.validInitialAmount;
                             let totalPeriods = 0;
                             let monthlyEquivalentDeposit = 0;
                             
                             // 确定计算周期和每月等效存款
                             if (this.currentMode === 'target') {
                                 totalPeriods = this.totalMonths;
-                                monthlyEquivalentDeposit = this.requiredMonthlyDeposit;
+                                monthlyEquivalentDeposit = parseFloat(this.requiredMonthlyDeposit);
                             } 
                             else if (this.currentMode === 'amount') {
                                 totalPeriods = this.totalMonths;
-                                monthlyEquivalentDeposit = this.monthlyDeposit;
+                                monthlyEquivalentDeposit = this.validMonthlyDeposit;
                             } 
                             else { // time模式
                                 totalPeriods = this.requiredMonths;
-                                monthlyEquivalentDeposit = this.monthlyDeposit;
+                                monthlyEquivalentDeposit = this.validMonthlyDeposit;
                             }
                             
-                            // 生成图表数据 (以月为单位)
-                            for (let i = 0; i <= totalPeriods; i++) {
-                                data.push({
-                                    month: i,
-                                    amount: currentAmount
-                                });
-                                currentAmount += monthlyEquivalentDeposit;
+                            // 确保周期和存款额度有效
+                            if (totalPeriods <= 0 || monthlyEquivalentDeposit === 0) {
+                                // 仅显示初始金额
+                                data.push({ month: 0, amount: currentAmount });
+                                return data;
                             }
 
-                            // 确保最后一个点达到目标金额 (仅对 target 和 time 模式)
-                            if (this.currentMode !== 'amount' && data.length > 0) {
-                                data[data.length - 1].amount = this.targetAmount;
+                            // 生成图表数据 (以月为单位)
+                            for (let i = 0; i <= totalPeriods; i++) {
+                                let amount = currentAmount + (i * monthlyEquivalentDeposit);
+                                
+                                // 确保最终金额不会超过目标金额太多 (针对 target/time 模式)
+                                if (this.currentMode !== 'amount' && amount > this.validTargetAmount) {
+                                    amount = this.validTargetAmount;
+                                }
+                                
+                                data.push({
+                                    month: i,
+                                    amount: amount
+                                });
                             }
-                            
+
                             return data;
                         }
                     },
@@ -1256,13 +1276,12 @@
                             deep: true
                         },
                         currentMode(newMode, oldMode) {
-                             // 切换模式时，重置时间单位和时间值，以匹配新模式的默认逻辑
+                             // 切换模式时，重置时间单位和时间值，以便用户输入
                             if (newMode !== oldMode) {
                                 if (newMode === 'target' || newMode === 'amount') {
                                     this.timeUnit = 'months';
-                                    this.timeValue = 12; // 默认12个月/1年
+                                    this.timeValue = null; // 清空时间值
                                 }
-                                // time模式不需要 timeValue/timeUnit
                             }
                         }
                     },
@@ -1273,9 +1292,10 @@
                     methods: {
                         // 格式化货币显示
                         formatCurrency(value) {
-                            if (isNaN(value) || value === 0) return '¥0';
-                            return '¥' + value.toLocaleString('zh-CN', {
-                                maximumFractionDigits: 2
+                            const num = parseFloat(value);
+                            if (isNaN(num) || num === 0) return '¥0';
+                            return '¥' + num.toLocaleString('zh-CN', {
+                                maximumFractionDigits: 2 // 保留两位小数
                             });
                         },
                         
