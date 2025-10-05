@@ -55,7 +55,7 @@
             border-radius: 12px;
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
-            max-width: 380px;
+            max-width: 300px;
             margin-left: auto;
             margin-right: auto;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -65,14 +65,14 @@
             background: rgba(255, 255, 255, 0.1);
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 10px 20px;
             border-radius: 8px;
             cursor: pointer;
             font-size: 1rem;
             font-weight: 600;
             transition: all 0.3s ease;
+            flex-grow: 1;
             text-align: center;
-            white-space: nowrap;
         }
 
         .tab-button:hover {
@@ -96,7 +96,7 @@
         .tab-content {
             display: none;
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
         }
 
         .tab-content.active {
@@ -536,62 +536,10 @@
             border-color: #4361ee;
         }
         
-        /* 费用分摊计算器特定样式 */
-        .cost-sharing-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .cost-sharing-card {
-            background-color: #f8f9ff;
-            border-radius: 10px;
-            padding: 18px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s;
-        }
-        
-        .cost-sharing-card:hover {
-            transform: translateY(-3px);
-        }
-        
-        .cost-sharing-card h3 {
-            font-size: 1rem;
-            color: #555;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        
-        .cost-sharing-value {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #182848;
-        }
-        
-        .cost-sharing-symbol {
-            font-size: 0.9rem;
-            margin-right: 3px;
-            color: #666;
-        }
-        
-        .cost-sharing-exact {
-            color: #27ae60;
-        }
-        
-        .cost-sharing-error {
-            color: #e74c3c;
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
-        }
-        
         /* 响应式设计 */
-        @media (max-width: 768px) {
+        @media (max-width: 576px) {
             .tabs-nav {
                 max-width: 95%;
-                flex-wrap: wrap;
             }
             .tab-button {
                 padding: 8px 10px;
@@ -606,9 +554,6 @@
             .savings-mode-selector {
                 flex-direction: column;
             }
-            .cost-sharing-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
@@ -622,7 +567,6 @@
         <button class="tab-button active" data-tab="exchange">汇率转换</button>
         <button class="tab-button" data-tab="cost">费用计算</button>
         <button class="tab-button" data-tab="savings">储蓄计算</button>
-        <button class="tab-button" data-tab="cost-sharing">费用分摊</button>
     </nav>
     
     <main class="main-container">
@@ -663,7 +607,7 @@
                                 <option value="KRW">韩元 (KRW)</option>
                                 <option value="TWD">新台币 (TWD)</option>
                                 <option value="SGD">新加坡元 (SGD)</option>
-                                <option value="THB">泰铢铢 (THB)</option>
+                                <option value="THB">泰铢 (THB)</option>
                             </select>
                             <span class="select-icon">▼</span>
                         </div>
@@ -693,7 +637,7 @@
                                 <option value="KRW">韩元 (KRW)</option>
                                 <option value="TWD">新台币 (TWD)</option>
                                 <option value="SGD">新加坡元 (SGD)</option>
-                                <option value="THB">泰铢铢 (THB)</option>
+                                <option value="THB">泰铢 (THB)</option>
                             </select>
                             <span class="select-icon">▼</span>
                         </div>
@@ -1018,92 +962,6 @@
             </div>
         </section>
 
-        <section id="cost-sharing" class="tab-content">
-            <div class="calculator-container">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div>
-                            <h2 class="card-title">费用分摊计算器</h2>
-                            <p class="card-subtitle">快速计算分摊到每日、每周、每月、每年的费用</p>
-                        </div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label" for="total-cost">总费用（元）</label>
-                        <div class="input-container">
-                            <input type="number" class="input-field" id="total-cost" placeholder="输入费用金额" min="0.01" step="0.01" value="10.00">
-                        </div>
-                        <div class="cost-sharing-error" id="cost-error"></div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label" for="period-value">分摊周期</label>
-                        <div class="input-container">
-                            <div style="display: flex; gap: 10px;">
-                                <div style="flex: 1;">
-                                    <input type="number" class="input-field" id="period-value" placeholder="周期数" min="1" value="1">
-                                </div>
-                                <div style="flex: 1;">
-                                    <select class="select-field" id="period-unit">
-                                        <option value="year">年</option>
-                                        <option value="month">月</option>
-                                        <option value="week">周</option>
-                                        <option value="day">天</option>
-                                    </select>
-                                    <span class="select-icon">▼</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="cost-sharing-error" id="period-error"></div>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button class="btn btn-primary" id="calculate-btn">
-                            <i class="fas fa-calculator btn-icon"></i>
-                            计算分摊费用
-                        </button>
-                    </div>
-                    
-                    <div class="cost-sharing-grid">
-                        <div class="cost-sharing-card">
-                            <h3>每日费用</h3>
-                            <div class="cost-sharing-value">
-                                <span class="cost-sharing-symbol">≈</span>
-                                <span id="daily-cost">0.03</span> 元
-                            </div>
-                        </div>
-                        
-                        <div class="cost-sharing-card">
-                            <h3>每周费用</h3>
-                            <div class="cost-sharing-value">
-                                <span class="cost-sharing-symbol">≈</span>
-                                <span id="weekly-cost">0.19</span> 元
-                            </div>
-                        </div>
-                        
-                        <div class="cost-sharing-card">
-                            <h3>每月费用</h3>
-                            <div class="cost-sharing-value">
-                                <span class="cost-sharing-symbol">≈</span>
-                                <span id="monthly-cost">0.83</span> 元
-                            </div>
-                        </div>
-                        
-                        <div class="cost-sharing-card">
-                            <h3>每年费用</h3>
-                            <div class="cost-sharing-value">
-                                <span class="cost-sharing-symbol" id="yearly-symbol">=</span>
-                                <span id="yearly-cost" class="cost-sharing-exact">10.00</span> 元
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
     </main>
     
     <footer class="footer">
@@ -1267,110 +1125,6 @@
             });
 
             // =================================================================
-            // 费用分摊计算器
-            // =================================================================
-            // 常量定义
-            const DAYS_PER_YEAR = 365;
-            const DAYS_PER_MONTH = DAYS_PER_YEAR / 12; // ≈30.4167
-            const DAYS_PER_WEEK = 7;
-            
-            // DOM元素
-            const totalCostInput = document.getElementById('total-cost');
-            const periodValueInput = document.getElementById('period-value');
-            const periodUnitSelect = document.getElementById('period-unit');
-            const calculateBtn = document.getElementById('calculate-btn');
-            
-            // 结果元素
-            const dailyCostElement = document.getElementById('daily-cost');
-            const weeklyCostElement = document.getElementById('weekly-cost');
-            const monthlyCostElement = document.getElementById('monthly-cost');
-            const yearlyCostElement = document.getElementById('yearly-cost');
-            const yearlySymbolElement = document.getElementById('yearly-symbol');
-            
-            // 错误信息元素
-            const costErrorElement = document.getElementById('cost-error');
-            const periodErrorElement = document.getElementById('period-error');
-            
-            // 初始化计算
-            calculateCosts();
-            
-            // 事件监听
-            totalCostInput.addEventListener('input', calculateCosts);
-            periodValueInput.addEventListener('input', calculateCosts);
-            periodUnitSelect.addEventListener('change', calculateCosts);
-            calculateBtn.addEventListener('click', calculateCosts);
-            
-            // 计算函数
-            function calculateCosts() {
-                // 重置错误信息
-                costErrorElement.style.display = 'none';
-                periodErrorElement.style.display = 'none';
-                
-                // 获取输入值
-                const totalCost = parseFloat(totalCostInput.value);
-                const periodValue = parseInt(periodValueInput.value);
-                const periodUnit = periodUnitSelect.value;
-                
-                // 验证输入
-                let isValid = true;
-                
-                if (isNaN(totalCost) || totalCost <= 0) {
-                    costErrorElement.textContent = '请输入大于0的有效费用金额';
-                    costErrorElement.style.display = 'block';
-                    isValid = false;
-                }
-                
-                if (isNaN(periodValue) || periodValue < 1) {
-                    periodErrorElement.textContent = '请输入大于等于1的整数';
-                    periodErrorElement.style.display = 'block';
-                    isValid = false;
-                }
-                
-                if (!isValid) return;
-                
-                // 计算总天数
-                let totalDays;
-                switch (periodUnit) {
-                    case 'year':
-                        totalDays = periodValue * DAYS_PER_YEAR;
-                        break;
-                    case 'month':
-                        totalDays = periodValue * DAYS_PER_MONTH;
-                        break;
-                    case 'week':
-                        totalDays = periodValue * DAYS_PER_WEEK;
-                        break;
-                    case 'day':
-                        totalDays = periodValue;
-                        break;
-                }
-                
-                // 计算每日费用（保留6位小数精度）
-                const dailyCost = totalCost / totalDays;
-                
-                // 计算其他费用
-                const weeklyCost = dailyCost * DAYS_PER_WEEK;
-                const monthlyCost = dailyCost * DAYS_PER_MONTH;
-                const yearlyCost = dailyCost * DAYS_PER_YEAR;
-                
-                // 更新结果（显示为2位小数）
-                dailyCostElement.textContent = dailyCost.toFixed(2);
-                weeklyCostElement.textContent = weeklyCost.toFixed(2);
-                monthlyCostElement.textContent = monthlyCost.toFixed(2);
-                yearlyCostElement.textContent = yearlyCost.toFixed(2);
-                
-                // 特殊处理：当输入单位是年时，每年费用显示精确值
-                if (periodUnit === 'year') {
-                    yearlySymbolElement.textContent = '=';
-                    yearlyCostElement.textContent = totalCost.toFixed(2);
-                    yearlyCostElement.classList.add('cost-sharing-exact');
-                } else {
-                    yearlySymbolElement.textContent = '≈';
-                    yearlyCostElement.classList.remove('cost-sharing-exact');
-                }
-            }
-
-            // =================================================================
             // 储蓄计算器
             // =================================================================
             let savingsVueInstance = null;
@@ -1496,4 +1250,134 @@
                             }
 
                             // 生成图表数据 (以月为单位)
-                            for (let i = 0; i 
+                            for (let i = 0; i <= totalPeriods; i++) {
+                                let amount = currentAmount + (i * monthlyEquivalentDeposit);
+                                
+                                // 确保最终金额不会超过目标金额太多 (针对 target/time 模式)
+                                if (this.currentMode !== 'amount' && amount > this.validTargetAmount) {
+                                    amount = this.validTargetAmount;
+                                }
+                                
+                                data.push({
+                                    month: i,
+                                    amount: amount
+                                });
+                            }
+
+                            return data;
+                        }
+                    },
+                    watch: {
+                        // 当数据变化时更新图表
+                        savingsData: {
+                            handler(newData) {
+                                this.updateChart(newData);
+                            },
+                            deep: true
+                        },
+                        currentMode(newMode, oldMode) {
+                             // 切换模式时，重置时间单位和时间值，以便用户输入
+                            if (newMode !== oldMode) {
+                                if (newMode === 'target' || newMode === 'amount') {
+                                    this.timeUnit = 'months';
+                                    this.timeValue = null; // 清空时间值
+                                }
+                            }
+                        }
+                    },
+                    mounted() {
+                        // 初始化图表
+                        this.initChart();
+                    },
+                    methods: {
+                        // 格式化货币显示
+                        formatCurrency(value) {
+                            const num = parseFloat(value);
+                            if (isNaN(num) || num === 0) return '¥0';
+                            return '¥' + num.toLocaleString('zh-CN', {
+                                maximumFractionDigits: 2 // 保留两位小数
+                            });
+                        },
+                        
+                        // 初始化图表
+                        initChart() {
+                            const ctx = document.getElementById('savingsChart').getContext('2d');
+                            this.savingsChart = new Chart(ctx, {
+                                type: 'line', // 使用折线图更适合显示累积趋势
+                                data: {
+                                    labels: this.savingsData.map(d => `第${d.month}月`),
+                                    datasets: [{
+                                        label: '储蓄金额',
+                                        data: this.savingsData.map(d => d.amount),
+                                        backgroundColor: 'rgba(67, 97, 238, 0.2)',
+                                        borderColor: 'rgba(67, 97, 238, 1)',
+                                        borderWidth: 2,
+                                        fill: true,
+                                        tension: 0.3,
+                                        pointRadius: 3
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            title: {
+                                                display: true,
+                                                text: '金额 (元)'
+                                            },
+                                            ticks: {
+                                                callback: function(value) {
+                                                    return '¥' + value.toLocaleString('zh-CN', {
+                                                        maximumFractionDigits: 0
+                                                    });
+                                                }
+                                            }
+                                        },
+                                        x: {
+                                            title: {
+                                                display: true,
+                                                text: '时间 (月)'
+                                            },
+                                            ticks: {
+                                                maxTicksLimit: 12
+                                            }
+                                        }
+                                    },
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function(context) {
+                                                    return '储蓄金额: ¥' + context.parsed.y.toLocaleString('zh-CN', {
+                                                        maximumFractionDigits: 2
+                                                    });
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        },
+                        
+                        // 更新图表数据
+                        updateChart(data) {
+                            if (this.savingsChart) {
+                                this.savingsChart.data.labels = data.map(d => `第${d.month}月`);
+                                this.savingsChart.data.datasets[0].data = data.map(d => d.amount);
+                                this.savingsChart.update();
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 初始化储蓄计算器
+            initSavingsCalculator();
+        });
+    </script>
+</body>
+</html>
