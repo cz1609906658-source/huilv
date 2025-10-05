@@ -3,25 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多功能计算器 - 汇率转换与费用计算</title>
+    <title>多功能计算器 - 汇率转换、费用计算与储蓄规划</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --accent: #4895ef;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --success: #4cc9f0;
-            --border-radius: 12px;
-            --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
-        
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
@@ -62,7 +52,7 @@
             margin-bottom: 30px;
             background: rgba(0, 0, 0, 0.2);
             padding: 10px;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             max-width: 300px;
@@ -91,7 +81,7 @@
 
         .tab-button.active {
             background: rgba(255, 255, 255, 0.9);
-            color: var(--dark);
+            color: #212529;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -126,8 +116,8 @@
         .card {
             background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(10px);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             padding: 25px;
             height: 100%;
@@ -148,7 +138,7 @@
         }
         
         .card-icon {
-            background: var(--primary);
+            background: #4361ee;
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -161,7 +151,7 @@
         
         .card-title {
             font-size: 24px;
-            color: var(--dark);
+            color: #212529;
             font-weight: 700;
         }
         
@@ -178,7 +168,7 @@
             display: block;
             margin-bottom: 6px;
             font-weight: 600;
-            color: var(--dark);
+            color: #212529;
             font-size: 14px;
         }
         
@@ -190,14 +180,14 @@
             width: 100%;
             padding: 12px;
             border: 2px solid #e9ecef;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             font-size: 14px;
-            transition: var(--transition);
+            transition: all 0.3s ease;
             background: white;
         }
         
         .input-field:focus {
-            border-color: var(--accent);
+            border-color: #4895ef;
             outline: none;
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
@@ -206,16 +196,16 @@
             width: 100%;
             padding: 12px;
             border: 2px solid #e9ecef;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             font-size: 14px;
             background: white;
             appearance: none;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
         
         .select-field:focus {
-            border-color: var(--accent);
+            border-color: #4895ef;
             outline: none;
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
@@ -239,19 +229,19 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: var(--primary);
+            background: #4361ee;
             color: white;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
         }
         
         .swap-btn:hover {
-            background: var(--secondary);
+            background: #3f37c9;
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
         }
@@ -262,17 +252,17 @@
         
         .result-container {
             background: rgba(72, 149, 239, 0.1);
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             padding: 15px;
             margin-top: 15px;
             text-align: center;
-            transition: var(--transition);
+            transition: all 0.3s ease;
         }
         
         .result-value {
             font-size: 26px;
             font-weight: 700;
-            color: var(--primary);
+            color: #4361ee;
             margin: 8px 0;
         }
         
@@ -292,11 +282,11 @@
             flex: 1;
             padding: 12px;
             border: none;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -304,13 +294,13 @@
         }
         
         .btn-primary {
-            background: var(--primary);
+            background: #4361ee;
             color: white;
             box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
         }
         
         .btn-primary:hover {
-            background: var(--secondary);
+            background: #3f37c9;
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
         }
@@ -321,8 +311,8 @@
         
         .btn-secondary {
             background: white;
-            color: var(--primary);
-            border: 2px solid var(--primary);
+            color: #4361ee;
+            border: 2px solid #4361ee;
         }
         
         .btn-secondary:hover {
@@ -349,7 +339,7 @@
         
         .loading-spinner {
             border: 3px solid rgba(67, 97, 238, 0.2);
-            border-top: 3px solid var(--primary);
+            border-top: 3px solid #4361ee;
             border-radius: 50%;
             width: 25px;
             height: 25px;
@@ -388,14 +378,14 @@
             margin-top: 20px;
             padding: 15px;
             border: 1px dashed #ccc;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             background-color: #f9f9f9;
             text-align: left;
         }
         
         .detailed-result h3 {
             margin-bottom: 10px;
-            color: var(--dark);
+            color: #212529;
             border-bottom: 1px solid #eee;
             padding-bottom: 5px;
         }
@@ -417,6 +407,135 @@
             color: #6c757d;
         }
         
+        /* 储蓄计算器特定样式 */
+        .savings-mode-selector {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .savings-mode-btn {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            background: rgba(0, 0, 0, 0.05);
+        }
+        
+        .savings-mode-btn:hover {
+            background: rgba(0, 0, 0, 0.08);
+        }
+        
+        .savings-mode-btn.active {
+            background: white;
+            border-bottom: 3px solid #4361ee;
+            color: #4361ee;
+        }
+        
+        .savings-result-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .savings-result-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4361ee;
+            margin: 10px 0;
+        }
+        
+        .savings-result-label {
+            font-size: 1rem;
+            color: #7f8c8d;
+        }
+        
+        .savings-progress-container {
+            margin: 20px 0;
+        }
+        
+        .savings-progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .savings-progress-bar {
+            height: 16px;
+            background: #ecf0f1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .savings-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4361ee, #4895ef);
+            border-radius: 8px;
+            transition: width 0.8s ease;
+        }
+        
+        .savings-chart-container {
+            height: 250px;
+            margin-top: 25px;
+        }
+        
+        .savings-summary {
+            background: #e8f4fc;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .savings-summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #d6eaf8;
+            font-size: 0.9rem;
+        }
+        
+        .savings-summary-item:last-child {
+            border-bottom: none;
+        }
+        
+        .savings-highlight {
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        .savings-frequency-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .savings-frequency-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+        
+        .savings-frequency-btn.active {
+            background: #4361ee;
+            color: white;
+            border-color: #4361ee;
+        }
+        
         /* 响应式设计 */
         @media (max-width: 576px) {
             .tabs-nav {
@@ -432,23 +551,26 @@
             .action-buttons {
                 flex-direction: column;
             }
+            .savings-mode-selector {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <header class="header">
         <h1><i class="fas fa-calculator"></i> 多功能计算器</h1>
-        <p>汇率转换与费用计算一站式解决方案</p>
+        <p>汇率转换、费用计算与储蓄规划一站式解决方案</p>
     </header>
 
     <nav class="tabs-nav">
         <button class="tab-button active" data-tab="exchange">汇率转换</button>
         <button class="tab-button" data-tab="cost">费用计算</button>
+        <button class="tab-button" data-tab="savings">储蓄计算</button>
     </nav>
     
     <main class="main-container">
 
-        <!-- 汇率转换器 -->
         <section id="exchange" class="tab-content active">
             <div class="calculator-container">
                 <div class="card">
@@ -551,7 +673,6 @@
             </div>
         </section>
 
-        <!-- 费用计算器 (原周期费用) -->
         <section id="cost" class="tab-content">
              <div class="calculator-container">
                 <div class="card">
@@ -611,6 +732,236 @@
             </div>
         </section>
 
+        <section id="savings" class="tab-content">
+            <div class="calculator-container">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <div>
+                            <h2 class="card-title">储蓄计算器</h2>
+                            <p class="card-subtitle">规划您的储蓄目标</p>
+                        </div>
+                    </div>
+                    
+                    <div id="savings-calc-app">
+                        <div class="savings-mode-selector">
+                            <div 
+                                class="savings-mode-btn" 
+                                :class="{active: currentMode === 'target'}"
+                                @click="currentMode = 'target'">
+                                存钱买什么？
+                            </div>
+                            <div 
+                                class="savings-mode-btn" 
+                                :class="{active: currentMode === 'amount'}"
+                                @click="currentMode = 'amount'">
+                                能存下多少？
+                            </div>
+                            <div 
+                                class="savings-mode-btn" 
+                                :class="{active: currentMode === 'time'}"
+                                @click="currentMode = 'time'">
+                                需要存多久？
+                            </div>
+                        </div>
+                        
+                        <div v-if="currentMode === 'target'">
+                            <div class="input-group">
+                                <label class="input-label" for="savings-targetAmount">目标金额（元）</label>
+                                <div class="input-container">
+                                    <input 
+                                        type="number" 
+                                        class="input-field" 
+                                        id="savings-targetAmount" 
+                                        v-model.number="targetAmount" 
+                                        placeholder="请输入目标金额，例如：50000"
+                                        min="0">
+                                </div>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label class="input-label" for="savings-targetTime">计划完成时间</label>
+                                <div class="input-container">
+                                    <input 
+                                        type="number" 
+                                        class="input-field" 
+                                        id="savings-targetTime" 
+                                        v-model.number="timeValue" 
+                                        placeholder="请输入时间数值，例如：12"
+                                        min="1">
+                                    <select class="select-field" v-model="timeUnit" style="margin-top: 10px;">
+                                        <option value="months">月</option>
+                                        <option value="years">年</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div v-if="currentMode === 'amount'">
+                            <div class="input-group">
+                                <label class="input-label" for="savings-monthlyDeposit">每月存款金额（元）</label>
+                                <div class="input-container">
+                                    <input 
+                                        type="number" 
+                                        class="input-field" 
+                                        id="savings-monthlyDeposit" 
+                                        v-model.number="monthlyDeposit" 
+                                        placeholder="请输入每月存款金额，例如：2000"
+                                        min="0">
+                                </div>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label class="input-label" for="savings-timeValue">计划储蓄时间</label>
+                                <div class="input-container">
+                                    <input 
+                                        type="number" 
+                                        class="input-field" 
+                                        id="savings-timeValue" 
+                                        v-model.number="timeValue" 
+                                        placeholder="请输入时间数值，例如：24"
+                                        min="1">
+                                    <select class="select-field" v-model="timeUnit" style="margin-top: 10px;">
+                                        <option value="months">月</option>
+                                        <option value="years">年</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div v-if="currentMode === 'time'">
+                            <div class="input-group">
+                                <label class="input-label" for="savings-timeTargetAmount">目标金额（元）</label>
+                                <div class="input-container">
+                                    <input 
+                                        type="number" 
+                                        class="input-field" 
+                                        id="savings-timeTargetAmount" 
+                                        v-model.number="targetAmount" 
+                                        placeholder="请输入目标金额，例如：30000"
+                                        min="0">
+                                </div>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label class="input-label" for="savings-monthlyDepositTime">每月存款金额（元）</label>
+                                <div class="input-container">
+                                    <input 
+                                        type="number" 
+                                        class="input-field" 
+                                        id="savings-monthlyDepositTime" 
+                                        v-model.number="monthlyDeposit" 
+                                        placeholder="请输入每月存款金额，例如：1500"
+                                        min="0">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label" for="savings-initialAmount">初始金额（可选）</label>
+                            <div class="input-container">
+                                <input 
+                                    type="number" 
+                                    class="input-field" 
+                                    id="savings-initialAmount" 
+                                    v-model.number="initialAmount" 
+                                    placeholder="请输入初始存款金额，例如：5000"
+                                    min="0">
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">存款频率</label>
+                            <div class="savings-frequency-selector">
+                                <div 
+                                    class="savings-frequency-btn" 
+                                    :class="{active: frequency === 'monthly'}"
+                                    @click="frequency = 'monthly'">
+                                    每月
+                                </div>
+                                <div 
+                                    class="savings-frequency-btn" 
+                                    :class="{active: frequency === 'weekly'}"
+                                    @click="frequency = 'weekly'">
+                                    每周
+                                </div>
+                                <div 
+                                    class="savings-frequency-btn" 
+                                    :class="{active: frequency === 'yearly'}"
+                                    @click="frequency = 'yearly'">
+                                    每年
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="savings-result-card">
+                            <div class="savings-result-label">您的储蓄计划</div>
+                            
+                            <div v-if="currentMode === 'target'">
+                                <div class="savings-result-value">{{ formatCurrency(requiredMonthlyDeposit) }}</div>
+                                <div class="savings-result-label">每月需要存款金额</div>
+                                <div v-if="['weekly', 'yearly'].includes(frequency)" style="margin-top: 10px;">
+                                    按{{ frequency === 'weekly' ? '每周' : '每年' }}存款: 
+                                    <strong>{{ formatCurrency(frequencyAmount) }}</strong>
+                                </div>
+                            </div>
+                            
+                            <div v-if="currentMode === 'amount'">
+                                <div class="savings-result-value">{{ formatCurrency(totalAmount) }}</div>
+                                <div class="savings-result-label">到期总金额</div>
+                            </div>
+                            
+                            <div v-if="currentMode === 'time'">
+                                <div class="savings-result-value">{{ requiredMonths }}</div>
+                                <div class="savings-result-label">需要存款月数</div>
+                                <div v-if="requiredMonths > 0" style="margin-top: 10px;">
+                                    约 {{ Math.floor(requiredMonths / 12) }} 年 {{ requiredMonths % 12 }} 个月
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="savings-progress-container">
+                            <div class="savings-progress-header">
+                                <span>当前进度</span>
+                                <span>{{ progressPercentage }}%</span>
+                            </div>
+                            <div class="savings-progress-bar">
+                                <div 
+                                    class="savings-progress-fill" 
+                                    :style="{width: progressPercentage + '%'}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="savings-chart-container">
+                            <canvas id="savingsChart"></canvas>
+                        </div>
+                        
+                        <div class="savings-summary">
+                            <div class="savings-summary-item">
+                                <span>目标金额:</span>
+                                <span class="savings-highlight">{{ formatCurrency(targetAmount) }}</span>
+                            </div>
+                            <div class="savings-summary-item">
+                                <span>初始金额:</span>
+                                <span>{{ formatCurrency(initialAmount) }}</span>
+                            </div>
+                            <div class="savings-summary-item">
+                                <span>每月存款:</span>
+                                <span>{{ formatCurrency(monthlyDeposit) }}</span>
+                            </div>
+                            <div class="savings-summary-item">
+                                <span>存款频率:</span>
+                                <span>{{ frequencyText }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
     
     <footer class="footer">
@@ -632,6 +983,13 @@
                     tabContents.forEach(c => c.classList.remove('active'));
                     tab.classList.add('active');
                     document.getElementById(targetId).classList.add('active');
+                    
+                    // 如果切换到储蓄计算器标签，更新图表
+                    if (targetId === 'savings' && savingsVueInstance && savingsVueInstance.savingsChart) {
+                        setTimeout(() => {
+                            savingsVueInstance.savingsChart.update();
+                        }, 300);
+                    }
                 });
             });
 
@@ -702,7 +1060,7 @@
             amountInput.addEventListener('input', () => { if (amountInput.value) convertCurrency() });
 
             // =================================================================
-            // 费用计算器 (原周期费用)
+            // 费用计算器
             // =================================================================
             const totalAmountCostInput = document.getElementById('cost-calc-total-amount');
             const unitCostCostInput = document.getElementById('cost-calc-unit-cost');
@@ -765,6 +1123,240 @@
 
                 costResult.innerHTML = resultHTML;
             });
+
+            // =================================================================
+            // 储蓄计算器
+            // =================================================================
+            let savingsVueInstance = null;
+            
+            function initSavingsCalculator() {
+                savingsVueInstance = new Vue({
+                    el: '#savings-calc-app',
+                    data: {
+                        currentMode: 'target', // target, amount, time
+                        targetAmount: 50000,   // 填写默认值
+                        monthlyDeposit: 2000,  // 填写默认值
+                        initialAmount: 0,      // 填写默认值
+                        timeValue: 12,         // 填写默认值
+                        timeUnit: 'months',
+                        frequency: 'monthly', // weekly, monthly, yearly
+                        savingsChart: null
+                    },
+                    computed: {
+                        // 计算总月数
+                        totalMonths() {
+                            if (this.timeUnit === 'years') {
+                                return this.timeValue * 12;
+                            }
+                            return this.timeValue;
+                        },
+                        
+                        // 目标模式：计算每月需要存款金额
+                        requiredMonthlyDeposit() {
+                            // 确保总月数大于0
+                            if (this.totalMonths <= 0 || this.targetAmount <= this.initialAmount) return 0;
+                            // 确保目标金额大于初始金额
+                            if (this.targetAmount <= this.initialAmount) return 0;
+                            
+                            return (this.targetAmount - this.initialAmount) / this.totalMonths;
+                        },
+                        
+                        // 总额模式：计算到期总金额
+                        totalAmount() {
+                            return this.initialAmount + (this.monthlyDeposit * this.totalMonths);
+                        },
+                        
+                        // 时间模式：计算需要存款月数
+                        requiredMonths() {
+                            if (this.monthlyDeposit <= 0) return 0;
+                            // 确保目标金额大于初始金额
+                            if (this.targetAmount <= this.initialAmount) return 0;
+
+                            return Math.ceil((this.targetAmount - this.initialAmount) / this.monthlyDeposit);
+                        },
+                        
+                        // 根据频率计算每次存款金额
+                        frequencyAmount() {
+                            if (this.requiredMonthlyDeposit === 0) return 0;
+                            if (this.frequency === 'weekly') {
+                                return this.requiredMonthlyDeposit / 4.33; // 近似按每月4.33周
+                            } else if (this.frequency === 'yearly') {
+                                return this.requiredMonthlyDeposit * 12;
+                            }
+                            return this.requiredMonthlyDeposit;
+                        },
+                        
+                        // 计算进度百分比
+                        progressPercentage() {
+                            if (this.currentMode === 'target' || this.currentMode === 'time') {
+                                if (this.targetAmount <= 0) return 0;
+                                return Math.min(100, Math.round((this.initialAmount / this.targetAmount) * 100));
+                            }
+                            // 'amount' 模式计算的是预期总额，用目标金额（默认为50000）作为参考，或只显示初始金额占比
+                            if (this.targetAmount > 0) {
+                                return Math.min(100, Math.round((this.initialAmount / this.targetAmount) * 100));
+                            }
+                            return 0; // 默认不显示进度条
+                        },
+                        
+                        // 频率文本显示
+                        frequencyText() {
+                            const texts = {
+                                'weekly': '每周',
+                                'monthly': '每月',
+                                'yearly': '每年'
+                            };
+                            return texts[this.frequency];
+                        },
+                        
+                        // 生成储蓄进度数据
+                        savingsData() {
+                            const data = [];
+                            let currentAmount = this.initialAmount;
+                            let totalPeriods = 0;
+                            let monthlyEquivalentDeposit = 0;
+                            
+                            // 确定计算周期和每月等效存款
+                            if (this.currentMode === 'target') {
+                                totalPeriods = this.totalMonths;
+                                monthlyEquivalentDeposit = this.requiredMonthlyDeposit;
+                            } 
+                            else if (this.currentMode === 'amount') {
+                                totalPeriods = this.totalMonths;
+                                monthlyEquivalentDeposit = this.monthlyDeposit;
+                            } 
+                            else { // time模式
+                                totalPeriods = this.requiredMonths;
+                                monthlyEquivalentDeposit = this.monthlyDeposit;
+                            }
+                            
+                            // 生成图表数据 (以月为单位)
+                            for (let i = 0; i <= totalPeriods; i++) {
+                                data.push({
+                                    month: i,
+                                    amount: currentAmount
+                                });
+                                currentAmount += monthlyEquivalentDeposit;
+                            }
+
+                            // 确保最后一个点达到目标金额 (仅对 target 和 time 模式)
+                            if (this.currentMode !== 'amount' && data.length > 0) {
+                                data[data.length - 1].amount = this.targetAmount;
+                            }
+                            
+                            return data;
+                        }
+                    },
+                    watch: {
+                        // 当数据变化时更新图表
+                        savingsData: {
+                            handler(newData) {
+                                this.updateChart(newData);
+                            },
+                            deep: true
+                        },
+                        currentMode(newMode, oldMode) {
+                             // 切换模式时，重置时间单位和时间值，以匹配新模式的默认逻辑
+                            if (newMode !== oldMode) {
+                                if (newMode === 'target' || newMode === 'amount') {
+                                    this.timeUnit = 'months';
+                                    this.timeValue = 12; // 默认12个月/1年
+                                }
+                                // time模式不需要 timeValue/timeUnit
+                            }
+                        }
+                    },
+                    mounted() {
+                        // 初始化图表
+                        this.initChart();
+                    },
+                    methods: {
+                        // 格式化货币显示
+                        formatCurrency(value) {
+                            if (isNaN(value) || value === 0) return '¥0';
+                            return '¥' + value.toLocaleString('zh-CN', {
+                                maximumFractionDigits: 2
+                            });
+                        },
+                        
+                        // 初始化图表
+                        initChart() {
+                            const ctx = document.getElementById('savingsChart').getContext('2d');
+                            this.savingsChart = new Chart(ctx, {
+                                type: 'line', // 使用折线图更适合显示累积趋势
+                                data: {
+                                    labels: this.savingsData.map(d => `第${d.month}月`),
+                                    datasets: [{
+                                        label: '储蓄金额',
+                                        data: this.savingsData.map(d => d.amount),
+                                        backgroundColor: 'rgba(67, 97, 238, 0.2)',
+                                        borderColor: 'rgba(67, 97, 238, 1)',
+                                        borderWidth: 2,
+                                        fill: true,
+                                        tension: 0.3,
+                                        pointRadius: 3
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            title: {
+                                                display: true,
+                                                text: '金额 (元)'
+                                            },
+                                            ticks: {
+                                                callback: function(value) {
+                                                    return '¥' + value.toLocaleString('zh-CN', {
+                                                        maximumFractionDigits: 0
+                                                    });
+                                                }
+                                            }
+                                        },
+                                        x: {
+                                            title: {
+                                                display: true,
+                                                text: '时间 (月)'
+                                            },
+                                            ticks: {
+                                                maxTicksLimit: 12
+                                            }
+                                        }
+                                    },
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function(context) {
+                                                    return '储蓄金额: ¥' + context.parsed.y.toLocaleString('zh-CN', {
+                                                        maximumFractionDigits: 2
+                                                    });
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        },
+                        
+                        // 更新图表数据
+                        updateChart(data) {
+                            if (this.savingsChart) {
+                                this.savingsChart.data.labels = data.map(d => `第${d.month}月`);
+                                this.savingsChart.data.datasets[0].data = data.map(d => d.amount);
+                                this.savingsChart.update();
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 初始化储蓄计算器
+            initSavingsCalculator();
         });
     </script>
 </body>
